@@ -24,10 +24,10 @@ Largely inspired by [dtoa-benchmark](https://github.com/miloyip/dtoa-benchmark) 
 
 | Library | Version | Dtoa | Atod | Algorithm |
 |---------|---------|:----:|:----:|-----------|
-| [dconv](https://github.com/joinframework/dconv) | v1.1.0 | ✓ | ✓ | Schubfach / Eisel-Lemire with strtod fallback |
-| [dconv](https://github.com/joinframework/dconv) grisu | v1.1.0 | ✓ | | Grisu |
-| [dconv](https://github.com/joinframework/dconv) grisu2 | v1.1.0 | ✓ | | Grisu2 |
-| [dconv](https://github.com/joinframework/dconv) grisu3 | v1.1.0 | ✓ | | Grisu3 with `std::to_chars` fallback |
+| [dconv](https://github.com/joinframework/dconv) | v1.2.1 | ✓ | ✓ | Schubfach / Eisel-Lemire with strtod fallback |
+| [dconv](https://github.com/joinframework/dconv) grisu | v1.2.1 | ✓ | | Grisu |
+| [dconv](https://github.com/joinframework/dconv) grisu2 | v1.2.1 | ✓ | | Grisu2 |
+| [dconv](https://github.com/joinframework/dconv) grisu3 | v1.2.1 | ✓ | | Grisu3 with `std::to_chars` fallback |
 | [double-conversion](https://github.com/google/double-conversion) | v3.4.0 | ✓ | ✓ | Grisu3 with bignum fallback / Clinger with bignum fallback |
 | [Drachennest](https://github.com/abolz/Drachennest) grisu3 | e6714a3 | ✓ | | Grisu3 with Dragon4 fallback |
 | [Drachennest](https://github.com/abolz/Drachennest) schubfach | e6714a3 | ✓ | | Schubfach |
