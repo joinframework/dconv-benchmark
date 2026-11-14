@@ -17,7 +17,7 @@ FetchContent_MakeAvailable(googlebenchmark)
 FetchContent_Declare(
     dconv
     GIT_REPOSITORY https://github.com/joinframework/dconv.git
-    GIT_TAG        v1.2.3
+    GIT_TAG        v2.0.0
     GIT_SHALLOW    TRUE
     SOURCE_SUBDIR  none
 )

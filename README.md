@@ -24,10 +24,10 @@ Largely inspired by [dtoa-benchmark](https://github.com/miloyip/dtoa-benchmark) 
 
 | Library | Version | Dtoa | Atod | Algorithm |
 |---------|---------|:----:|:----:|-----------|
-| [dconv](https://github.com/joinframework/dconv) | v1.2.3 | ✓ | ✓ | Schubfach / Eisel-Lemire with strtod fallback |
-| [dconv](https://github.com/joinframework/dconv) grisu | v1.2.3 | ✓ | | Grisu |
-| [dconv](https://github.com/joinframework/dconv) grisu2 | v1.2.3 | ✓ | | Grisu2 |
-| [dconv](https://github.com/joinframework/dconv) grisu3 | v1.2.3 | ✓ | | Grisu3 with `std::to_chars` fallback |
+| [dconv](https://github.com/joinframework/dconv) | v2.0.0 | ✓ | ✓ | Schubfach / Eisel-Lemire with strtod fallback |
+| [dconv](https://github.com/joinframework/dconv) grisu | v2.0.0 | ✓ | | Grisu |
+| [dconv](https://github.com/joinframework/dconv) grisu2 | v2.0.0 | ✓ | | Grisu2 |
+| [dconv](https://github.com/joinframework/dconv) grisu3 | v2.0.0 | ✓ | | Grisu3 with `std::to_chars` fallback |
 | [double-conversion](https://github.com/google/double-conversion) | v3.4.0 | ✓ | ✓ | Grisu3 with bignum fallback / Clinger with bignum fallback |
 | [Drachennest](https://github.com/abolz/Drachennest) grisu3 | e6714a3 | ✓ | | Grisu3 with Dragon4 fallback |
 | [Drachennest](https://github.com/abolz/Drachennest) schubfach | e6714a3 | ✓ | | Schubfach |
@@ -191,11 +191,11 @@ All figures below come from a single run on this machine (3 repetitions, each in
 | Frequency | 3700 MHz, `performance` governor, boost disabled |
 | Caches | L1d 8 × 32 KiB, L2 8 × 512 KiB, L3 2 × 8 MiB |
 | RAM | 16 GiB |
-| OS | Ubuntu 26.04.1 LTS, kernel 7.0.0-38-generic |
+| OS | Ubuntu 26.04.1 LTS, kernel 7.0.0-43-generic |
 | Toolchain | GCC 15.2.0, glibc 2.43, libstdc++ runtime from GCC 16 (6.0.35), CMake 4.2.3 |
 | Compile flags | `-O3 -DNDEBUG -march=native -std=c++20` |
 | Pinning | `taskset -c 2` (physical core, SMT sibling 10) |
-| Conditions | idle machine, 3 repetitions, run started once the CPU was back to its rated clock; spread across repetitions below 2% for 429 of 462 benchmarks and below 5% for 449; outliers are Milo Yip's Grisu2 (up to 14% on `Integer`) and dconv on short `Digits` datasets (up to 8%) |
+| Conditions | idle machine, 3 repetitions, run started once the CPU was back to its rated clock; spread across repetitions below 2% for 422 of 462 benchmarks and below 5% for 442; outliers are dconv Grisu3 (up to 13% on `Canada`), dconv on the `Digits04` to `Digits08` datasets (up to 11%), `std::to_chars` and Milo Yip's Grisu2 (up to 10%) |
 
 ## Results
 
@@ -207,7 +207,7 @@ Measured on a development machine. Re-run `scripts/run_bench.sh` to reproduce on
 
 ![Dtoa by digits](plots/digits_dtoa.png)
 
-**Dragonbox** leads at 25.1 ns per value, followed by **dconv** (28.9 ns, Schubfach), **Drachennest Schubfach** (29.3 ns) and **Ryu** (32.2 ns): these recent algorithms compute the shortest decimal significand with a few 128-bit multiplications, then print it, and their time barely depends on the number of digits (29.4 ns for one digit and 39.1 ns for seventeen with dconv). dconv is the fastest on integers (15.1 ns). **dconv Grisu** (34.1 ns) prints up to 18 digits without looking for the shortest output. **fmt** (41.2 ns) uses Dragonbox but pays for its formatting layer. **Drachennest Grisu3** (46.3 ns) is fast on integers (17.8 ns) but slower on random exponents. **std** (`std::to_chars`, 51.6 ns), **Tejú Jaguá** (56.6 ns), **dconv Grisu2** (59.6 ns) and **dconv Grisu3** (63.1 ns) form the next group; Grisu2 and Grisu3 generate the digits one by one (35 ns for one digit, about 70 ns for seventeen). **Milo Yip**'s Grisu2 (74.6 ns) and **double-conversion** (92.9 ns) follow. **libc** (`snprintf`, 422 ns) and **David Gay**'s `dtoa.c` (766 ns, up to 1.5 µs on random exponents, bignum arithmetic) are an order of magnitude slower.
+**Dragonbox** leads at 25.1 ns per value, followed by **dconv** (28.9 ns, Schubfach), **Drachennest Schubfach** (29.3 ns) and **Ryu** (32.2 ns): these recent algorithms compute the shortest decimal significand with a few 128-bit multiplications, then print it, and their time barely depends on the number of digits (29.4 ns for one digit and 38.2 ns for seventeen with dconv). dconv is the fastest on integers (15.1 ns). **dconv Grisu** (33.7 ns) prints up to 18 digits without looking for the shortest output. **fmt** (41.8 ns) uses Dragonbox but pays for its formatting layer. **Drachennest Grisu3** (46.3 ns) is fast on integers (17.6 ns) but slower on random exponents. **std** (`std::to_chars`, 51.7 ns), **dconv Grisu2** (58.8 ns), **dconv Grisu3** (60.8 ns) and **Tejú Jaguá** (63.5 ns) form the next group; Grisu2 and Grisu3 generate the digits one by one (35 ns for one digit, about 70 ns for seventeen). **Milo Yip**'s Grisu2 (73.5 ns) and **double-conversion** (91.8 ns) follow. **libc** (`snprintf`, 424 ns) and **David Gay**'s `dtoa.c` (774 ns, up to 1.5 µs on random exponents, bignum arithmetic) are an order of magnitude slower.
 
 Tejú Jaguá only provides the decimal significand and exponent: its figure includes the formatting written in its adapter, a plain division loop, and is likely pessimistic for the algorithm itself.
 
@@ -217,7 +217,9 @@ Tejú Jaguá only provides the decimal significand and exponent: its figure incl
 
 ![Atod by digits](plots/digits_atod.png)
 
-**fast_float** (20.2 ns per value) and **dconv** (20.5 ns) lead, both using the Eisel-Lemire algorithm: dconv is faster on integers (13.4 ns against 19.7 ns), fast_float on `Canada` (15.8 ns against 20.1 ns) and `Unit` (14.3 ns against 16.6 ns). **std** (`std::from_chars`, 25.9 ns, built on fast_float in libstdc++) follows within 30%, then **Ryu** (41.1 ns). **double-conversion** (100.4 ns) is five times slower, then **libc** (`strtod`, 153 ns) and **David Gay**'s `strtod` (254 ns).
+**fast_float** (20.2 ns per value) and **dconv** (21.4 ns) lead, both using the Eisel-Lemire algorithm: dconv is faster on integers (14.4 ns against 19.8 ns), fast_float on `Canada` (15.8 ns against 21.2 ns) and `Unit` (14.3 ns against 17.2 ns). **std** (`std::from_chars`, 25.9 ns, built on fast_float in libstdc++) follows within 30%, then **Ryu** (41.1 ns). **double-conversion** (100.4 ns) is five times slower, then **libc** (`strtod`, 153 ns) and **David Gay**'s `strtod` (255 ns).
+
+dconv is measured in its default general format (`AtodMode::General`), which accepts what `std::from_chars` and fast_float accept by default; its `AtodMode::Json` grammar is not measured here.
 
 ### Conformance
 
